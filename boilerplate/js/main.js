@@ -15,17 +15,18 @@ window.onload = function(){
     //Example 1.8 line 1...innerRect block
     var innerRect = container.append("rect")
         .datum(400) //a single value is a DATUM
-        .attr("width", function(d){ //rectangle width
+        .attr("width", function(d){ //rectangle width. The input d is datum, but remember that it could be any word or letter, not just d.
             return d * 2; //400 * 2 = 800
         })
         .attr("height", function(d){ //rectangle height
             return d; //400
         })
-        .attr("class", "innerRect") //class name
+        .attr("class", "innerRect") //class name. Create the inner rectangle inside the other svg
         .attr("x", 50) //position from left on the x (horizontal) axis
         .attr("y", 50) //position from top on the y (vertical) axis
         .style("fill", "#FFFFFF"); //fill color
 
+        //create the array
     var cityPop = [
         { 
             city: 'Madison',
@@ -45,12 +46,11 @@ window.onload = function(){
         }
     ];
 
-    //above Example 2.8 line 20
+    
     var x = d3.scaleLinear() //create the scale
         .range([90, 750]) //output min and max
         .domain([0, 3]); //input min and max
 
-    //above Example 2.8 line 20
     //find the minimum value of the array
     var minPop = d3.min(cityPop, function(d){
         return d.population;
@@ -79,9 +79,9 @@ window.onload = function(){
 
     //Example 2.6 line 3
     var circles = container.selectAll(".circles") //create an empty selection
-        .data(cityPop) //here we feed in an array
-        .enter() //one of the great mysteries of the universe
-        .append("circle") //inspect the HTML--holy crap, there's some circles there
+        .data(cityPop) //plug in cityPop into data
+        .enter() //add it but not sure what it does
+        .append("circle") //adds circles
         .attr("class", "circles")
         .attr("id", function(d){
             return d.city;
@@ -102,17 +102,18 @@ window.onload = function(){
         .style("fill", function(d, i){ //add a fill based on the color scale generator
             return color(d.population);
         })
-        .style("stroke", "#000"); //black circle stroke
+        .style("stroke", "#000"); //000 gives you black
 
         //add axis
-        var yAxis = d3.axisLeft(y);
+        var yAxis = d3.axisLeft(y); //adds axis to the left side
 
-        //create axis g element and add axis
+        //create axis g element and add axis. FOllow similar strategy to that above in var circles
         var axis = container.append("g")
                 .attr("class", "axis")
                 .attr("transform", "translate(50, 0)")
                 .call(yAxis);
 
+        //create title, change the color and size in style.css
         var title = container.append("text")
             .attr("class", "title")
             .attr("text-anchor", "middle")
@@ -120,7 +121,7 @@ window.onload = function(){
             .attr("y", 30)
             .text("City Populations");
 
-        //Example 3.14 line 1...create circle labels
+        //Example 3.14 line 1...create circle labels, don't forget to do ".labels" instead of just "labels"
     var labels = container.selectAll(".labels")
         .data(cityPop)
         .enter()
@@ -132,7 +133,7 @@ window.onload = function(){
             return y(d.population);
         });
 
-    //first line of label
+        //creates the labels
     var nameLine = labels.append("tspan")
         .attr("class", "nameLine")
         .attr("x", function(d,i){
@@ -152,11 +153,9 @@ window.onload = function(){
         .attr("x", function(d,i){
             return x(i) + Math.sqrt(d.population * 0.01 / Math.PI) + 5;
         })
-        .attr("dy", "15") //vertical offset
+        .attr("dy", "15") //vertical offset to vertically center the entire label with each circle
         .text(function(d){
             return "Pop. " + format(d.population); //use format generator to format numbers
         });
-
-
 
 };
