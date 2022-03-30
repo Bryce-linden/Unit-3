@@ -6,3 +6,9 @@
 .innerRect{
     padding: 50px;
 }
+
+.title{
+    fill: rgb(200, 117, 40);
+    font-size: 32px;
+    font-weight: bold;
+}
