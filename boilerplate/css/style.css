@@ -7,6 +7,20 @@
     padding: 50px;
 }
 
+.map{
+    
+    border: medium solid #999;
+}
+
+.countries{
+    fill:rgb(145, 145, 145)
+}
+
+.counties{
+    fill:rgb(62, 171, 214);
+    stroke: rgb(24, 31, 34)
+}
+
 .title{
     fill: rgb(200, 117, 40);
     font-size: 32px;

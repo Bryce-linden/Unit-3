@@ -1,6 +1,4 @@
-"County
-
-",Population aged 18 and over,Percentage pop. aged 18 and over,Population under 18,Percentage pop under 18,Percent pop. white ,Unemployment Rate %,Per capita income $,Real GDP (Thousands of $)
+County,varA,varB,varC,varD,varE,varF,varG,varH
 Lincoln,16037,81.5,3640,18.5,91.2,9.76,41129,526520
 Flathead,81505,78.1,22852,21.9,90.7,4.76,52740,3693810
 Glacier,9448,68.6,4330,31.4,25.6,9.35,41773,435361
