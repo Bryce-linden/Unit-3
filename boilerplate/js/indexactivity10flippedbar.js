@@ -1,7 +1,7 @@
 //begin script when window loads
 (function(){
     
-    var attrArray = ["varA", "varB", "varC", "varD", "varE"]; //follow format of example with var
+    var attrArray = ["varA", "varB", "varC", "varD", "varE"];
 
     var expressed = attrArray[0];
 
@@ -52,8 +52,7 @@
             var csvData = data[0],
                 world = data[1],
                 montana = data[2];
-            //you'll only use worldCOuntries as the background, you won't interact with it
-            //montanaCounties is the important one
+
             var worldCountries = topojson.feature(world, world.objects.ne_10m_admin_1_states_provinces),
                 montanaCounties = topojson.feature(montana,montana.objects.MontanaCounties).features;
 
@@ -84,18 +83,18 @@
 
 
 
-//STILL ONE PROBLEM!!!!!! THE NUMBERS ARE STRINGS WHEN THEY NEED TO BE INTEGERS. Actually this doesn't matter...
+//STILL ONE PROBLEM!!!!!! THE NUMBERS ARE STRINGS WHEN THEY NEED TO BE INTEGERS
     function joinData(montanaCounties, csvData){
          //loop through csv to assign each set of csv attribute values to geojson region
          for (var i = 0; i < csvData.length; i++) {
             var csvRegion = csvData[i]; //the current region
-            var csvKey = csvRegion.County; //the CSV primary key, use county for csv (cell 1)
+            var csvKey = csvRegion.County; //the CSV primary key
             console.log('print this', csvRegion)   
     
             //loop through geojson regions to find correct region
             for (var a = 0; a < montanaCounties.length; a++) {
             var geojsonProps = montanaCounties[a].properties; //the current region geojson properties
-            var geojsonKey = geojsonProps.NAME; //the geojson primary key, It's actually NAME
+            var geojsonKey = geojsonProps.NAME; //the geojson primary key
             
                 //where primary keys match, transfer csv data to geojson properties object
                 if (geojsonKey == csvKey) {
@@ -113,7 +112,6 @@
     };
     
     //Example 1.4 line 11...function to create color scale generator
-    //change color later when you have time
     function makeColorScale(data){
         var colorClasses = [
             "#D4B9DA",
@@ -139,15 +137,15 @@
     };
 
     function setEnumerationUnits(montanaCounties, map, path, colorScale){
-        
+        //...REGIONS BLOCK FROM Week 8
           //add counties  to map
-          var countiesZ = map //use countiesZ so I don't get confused what I am looking at
+          var countiesZ = map
           .selectAll(".countiesZ")
           .data(montanaCounties)
           .enter()
           .append("path")
           .attr("class", function (d) {
-              return "countiesZ " + d.properties.NAME; //NAME works even though it's a different color
+              return "countiesZ " + d.properties.NAME;
           })
           .attr("d", path)        
           .style("fill", function(d){            
@@ -164,7 +162,13 @@
 function setChart(csvData, colorScale){
     //chart frame dimensions
     var chartWidth = window.innerWidth * 0.425,
-        chartHeight = 460;
+        chartHeight = 473,
+        leftPadding = 25,
+        rightPadding = 2,
+        topBottomPadding = 5,
+        chartInnerWidth = chartWidth - leftPadding - rightPadding,
+        chartInnerHeight = chartHeight - topBottomPadding * 2,
+        translate = "translate(" + leftPadding + "," + topBottomPadding + ")";
 
     //create a second svg element to hold the bar chart
     var chart = d3.select("body")
@@ -173,12 +177,102 @@ function setChart(csvData, colorScale){
         .attr("height", chartHeight)
         .attr("class", "chart");
 
+    //create a rectangle for chart background fill
+    var chartBackground = chart.append("rect")
+        .attr("class", "chartBackground")
+        .attr("width", chartInnerWidth)
+        .attr("height", chartInnerHeight)
+        .attr("transform", translate);
+
+    //create a scale to size bars proportionally to frame and for axis
+    var yScale = d3.scaleLinear()
+        .range([0, 0.5])
+        .domain([0, 100]);
+
+    //set bars for each province
+    var bars = chart.selectAll(".bar")
+        .data(csvData)
+        .enter()
+        .append("rect")
+        .sort(function(a, b){
+            return b[expressed]-a[expressed]
+        })
+        .attr("class", function(d){
+            return "bar " + d.adm1_code;
+        })
+        .attr("width", chartInnerWidth / csvData.length - 1)
+        .attr("x", function(d, i){
+            return i * (chartInnerWidth / csvData.length) + leftPadding;
+        })
+        .attr("height", function(d, i){
+            return 463 - yScale(parseFloat(d[expressed]));
+        })
+        .attr("y", function(d, i){
+            return yScale(parseFloat(d[expressed])) + topBottomPadding;
+        })
+        .style("fill", function(d){
+            return colorScale(d[expressed]);
+        });
+
+    //create a text element for the chart title
+    var chartTitle = chart.append("text")
+        .attr("x", 40)
+        .attr("y", 40)
+        .attr("class", "chartTitle")
+        .text("Number of Variable " + expressed[3] + " in each region");
+
+    //create vertical axis generator
+    var yAxis = d3.axisLeft()
+        .scale(yScale);
+
+    //place axis
+    var axis = chart.append("g")
+        .attr("class", "axis")
+        .attr("transform", translate)
+        .call(yAxis);
+
+    //create frame for chart border
+    var chartFrame = chart.append("rect")
+        .attr("class", "chartFrame")
+        .attr("width", chartInnerWidth)
+        .attr("height", chartInnerHeight)
+        .attr("transform", translate);
+};
+  /* old chart that doesn't work
+//function to create coordinated bar chart
+function setChart(csvData, colorScale){
+    //chart frame dimensions
+    var chartWidth = window.innerWidth * 0.425,
+        chartHeight = 473,
+        leftPadding = 25,
+        rightPadding = 2,
+        topBottomPadding = 5,
+        chartInnerWidth = chartWidth - leftPadding - rightPadding,
+        chartInnerHeight = chartHeight - topBottomPadding * 2,
+        translate = "translate(" + leftPadding + "," + topBottomPadding + ")";
+
+    //create a second svg element to hold the bar chart
+    var chart = d3.select("body")
+        .append("svg")
+        .attr("width", chartWidth)
+        .attr("height", chartHeight)
+        .attr("class", "chart");
+//create a rectangle for chart background fill
+    var chartBackground = chart.append("rect")
+        .attr("class", "chartBackground")
+        .attr("width", chartInnerWidth)
+        .attr("height", chartInnerHeight)
+        .attr("transform", translate);
+
     //change the range from [0, chartHeight] to [0,.5] as this actually gets the bar chart to show up
     var yScale = d3.scaleLinear()
-        .range([0, .5]) //range has to be very low otherwise the bars will be huge (think about the difference in my data to the example data)
+        .range([0, .5])
         .domain([0, 105]);
+     //set bars for each province
 
-     //set bars for each county in the dataset
+
+
+
      var bars = chart.selectAll(".bars")
         .data(csvData)
         .enter()
@@ -187,17 +281,17 @@ function setChart(csvData, colorScale){
             return a[expressed]-b[expressed]
         })
         .attr("class", function(d){
-            return "bars " + d.County; //change to county from the .adm in example
+            return "bars " + d.County;
         })
-        .attr("width", chartWidth / csvData.length - 1)
+        .attr("width", chartInnerWidth / csvData.length - 1)
         .attr("x", function(d, i){
-            return i * (chartWidth / csvData.length);
+            return i * (chartInnerWidth / csvData.length) + leftPadding;
         })
-        .attr("height", function(d){
-            return yScale(parseFloat(d[expressed]));
+        .attr("height", function(d, i){
+            return 463 - yScale(parseFloat(d[expressed]));
         })
-        .attr("y", function(d){
-            return chartHeight - yScale(parseFloat(d[expressed]));
+        .attr("y", function(d, i){
+            return yScale(parseFloat(d[expressed])) + topBottomPadding;
         })
        
         //Example 2.5 line 23...end of bars block
@@ -229,11 +323,30 @@ function setChart(csvData, colorScale){
         });
 
     var chartTitle = chart.append("text")
-        .attr("x", 20)
+        .attr("x", 40)
         .attr("y", 40)
         .attr("class", "chartTitle")
         .text("Population aged 18 and over in each county");
-};
+
+
+    //create vertical axis generator
+    var yAxis = d3.axisLeft()
+        .scale(yScale);
+
+    //place axis
+    var axis = chart.append("g")
+        .attr("class", "axis")
+        .attr("transform", translate)
+        .call(yAxis);
+
+    //create frame for chart border
+    var chartFrame = chart.append("rect")
+        .attr("class", "chartFrame")
+        .attr("width", chartInnerWidth)
+        .attr("height", chartInnerHeight)
+        .attr("transform", translate);
+
+        */
 
 })();
 

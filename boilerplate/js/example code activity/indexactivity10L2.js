@@ -1,7 +1,7 @@
 //begin script when window loads
 (function(){
     
-    var attrArray = ["varA", "varB", "varC", "varD", "varE"]; //follow format of example with var
+    var attrArray = ["varA", "varB", "varC", "varD", "varE"];
 
     var expressed = attrArray[0];
 
@@ -52,8 +52,7 @@
             var csvData = data[0],
                 world = data[1],
                 montana = data[2];
-            //you'll only use worldCOuntries as the background, you won't interact with it
-            //montanaCounties is the important one
+
             var worldCountries = topojson.feature(world, world.objects.ne_10m_admin_1_states_provinces),
                 montanaCounties = topojson.feature(montana,montana.objects.MontanaCounties).features;
 
@@ -84,18 +83,18 @@
 
 
 
-//STILL ONE PROBLEM!!!!!! THE NUMBERS ARE STRINGS WHEN THEY NEED TO BE INTEGERS. Actually this doesn't matter...
+//STILL ONE PROBLEM!!!!!! THE NUMBERS ARE STRINGS WHEN THEY NEED TO BE INTEGERS
     function joinData(montanaCounties, csvData){
          //loop through csv to assign each set of csv attribute values to geojson region
          for (var i = 0; i < csvData.length; i++) {
             var csvRegion = csvData[i]; //the current region
-            var csvKey = csvRegion.County; //the CSV primary key, use county for csv (cell 1)
+            var csvKey = csvRegion.County; //the CSV primary key
             console.log('print this', csvRegion)   
     
             //loop through geojson regions to find correct region
             for (var a = 0; a < montanaCounties.length; a++) {
             var geojsonProps = montanaCounties[a].properties; //the current region geojson properties
-            var geojsonKey = geojsonProps.NAME; //the geojson primary key, It's actually NAME
+            var geojsonKey = geojsonProps.NAME; //the geojson primary key
             
                 //where primary keys match, transfer csv data to geojson properties object
                 if (geojsonKey == csvKey) {
@@ -113,7 +112,6 @@
     };
     
     //Example 1.4 line 11...function to create color scale generator
-    //change color later when you have time
     function makeColorScale(data){
         var colorClasses = [
             "#D4B9DA",
@@ -139,15 +137,15 @@
     };
 
     function setEnumerationUnits(montanaCounties, map, path, colorScale){
-        
+        //...REGIONS BLOCK FROM Week 8
           //add counties  to map
-          var countiesZ = map //use countiesZ so I don't get confused what I am looking at
+          var countiesZ = map
           .selectAll(".countiesZ")
           .data(montanaCounties)
           .enter()
           .append("path")
           .attr("class", function (d) {
-              return "countiesZ " + d.properties.NAME; //NAME works even though it's a different color
+              return "countiesZ " + d.properties.NAME;
           })
           .attr("d", path)        
           .style("fill", function(d){            
@@ -175,10 +173,13 @@ function setChart(csvData, colorScale){
 
     //change the range from [0, chartHeight] to [0,.5] as this actually gets the bar chart to show up
     var yScale = d3.scaleLinear()
-        .range([0, .5]) //range has to be very low otherwise the bars will be huge (think about the difference in my data to the example data)
+        .range([0, .5])
         .domain([0, 105]);
+     //set bars for each province
 
-     //set bars for each county in the dataset
+
+
+
      var bars = chart.selectAll(".bars")
         .data(csvData)
         .enter()
@@ -187,7 +188,7 @@ function setChart(csvData, colorScale){
             return a[expressed]-b[expressed]
         })
         .attr("class", function(d){
-            return "bars " + d.County; //change to county from the .adm in example
+            return "bars " + d.County;
         })
         .attr("width", chartWidth / csvData.length - 1)
         .attr("x", function(d, i){
@@ -199,7 +200,9 @@ function setChart(csvData, colorScale){
         .attr("y", function(d){
             return chartHeight - yScale(parseFloat(d[expressed]));
         })
-       
+        /*.attr("y", function(d){
+            return chartHeight - yScale(parseFloat(d[expressed]));
+        }) */
         //Example 2.5 line 23...end of bars block
         .style("fill", function(d){
             return colorScale(d[expressed]);

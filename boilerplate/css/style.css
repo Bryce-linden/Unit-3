@@ -10,15 +10,43 @@
 .map{
     
     border: medium solid #999;
+    margin: 10px 0 0 20px;
 }
 
 .countries{
-    fill:rgb(145, 145, 145)
+    fill:rgb(145, 145, 145);
+    stroke: rgb(80, 80, 80);
+    stroke-width: 2px;
 }
 
+.numbers {
+    fill: white;
+    font-family: "Eastwood";
+    font-size: 12px;
+}
+
+@font-face {
+    font-family: "Eastwood";
+    src: url('/boilerplate/data/Eastwood.ttf');
+}
+
+
+.chartTitle{
+    font-family: "Eastwood";
+    font-size: 1.5em;
+    font-weight: bold;
+}
+
+
+.chart {
+    background-color: rgba(128,128,128,.2);
+    border: medium solid #999;
+    float: right;
+    margin: 10px 20px 0 0;
+}
 .counties{
-    fill:rgb(62, 171, 214);
-    stroke: rgb(24, 31, 34)
+    
+    stroke: rgb(17, 73, 97)
 }
 
 .title{
