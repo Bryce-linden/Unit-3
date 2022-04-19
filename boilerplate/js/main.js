@@ -5,6 +5,22 @@
 
     var expressed = attrArray[0];
 
+
+    var chartWidth = window.innerWidth * 0.425,
+    chartHeight = 460,
+    leftPadding = 25,
+    rightPadding = 2,
+    topBottomPadding = 5,
+    chartInnerWidth = chartWidth - leftPadding - rightPadding,
+    chartInnerHeight = chartHeight - topBottomPadding * 2,
+    translate = "translate(" + leftPadding + "," + topBottomPadding + ")";
+        
+     //change the range from [0, chartHeight] to [0,.5] as this actually gets the bar chart to show up
+    var yScale = d3.scaleLinear()
+        .range([0, .5]) //range has to be very low otherwise the bars will be huge (think about the difference in my data to the example data)
+        .domain([0, 110]);   
+
+
     window.onload = setMap();
 
 
@@ -73,6 +89,8 @@
         setEnumerationUnits(montanaCounties, map, path, colorScale);
         
         setChart(csvData,colorScale);
+        createDropdown(csvData);
+        changeAttribute();
         }
     };
 
@@ -112,16 +130,38 @@
         return montanaCounties;
     };
     
+
+    function makeColorScale(data) {
+        var colorClasses = ["#D4B9DA", "#C994C7", "#DF65B0", "#DD1C77", "#980043"];
+
+        //create color scale generator
+        var colorScale = d3.scaleQuantile().range(colorClasses);
+
+        //build array of all values of the expressed attribute
+        var domainArray = [];
+        for (var i = 0; i < data.length; i++) {
+            var val = parseFloat(data[i][expressed]);
+            domainArray.push(val);
+        }
+
+        //assign array of expressed values as scale domain
+        colorScale.domain(domainArray);
+
+        return colorScale;
+    }
+
+
     //Example 1.4 line 11...function to create color scale generator
-    //change color later when you have time
+    /* color doesn't seem to be working
     function makeColorScale(data){
+     
         var colorClasses = [
-            "#D4B9DA",
-            "#C994C7",
-            "#DF65B0",
-            "#DD1C77",
-            "#980043"
+            "#fee6ce",
+            "#fdae6b",
+            "#e6550d",
         ];
+       
+       
 
         //create color scale generator
         var colorScale = d3.scaleQuantile()
@@ -137,7 +177,7 @@
 
         return colorScale;
     };
-
+*/
     function setEnumerationUnits(montanaCounties, map, path, colorScale){
         
           //add counties  to map
@@ -160,81 +200,177 @@
       });
   }
 
-//function to create coordinated bar chart
-function setChart(csvData, colorScale){
-    //chart frame dimensions
-    var chartWidth = window.innerWidth * 0.425,
-        chartHeight = 460;
+    //function to create coordinated bar chart
+    function setChart(csvData, colorScale){
+        //chart frame dimensions
+        
 
-    //create a second svg element to hold the bar chart
-    var chart = d3.select("body")
-        .append("svg")
-        .attr("width", chartWidth)
-        .attr("height", chartHeight)
-        .attr("class", "chart");
+        //create a second svg element to hold the bar chart
+        var chart = d3.select("body")
+            .append("svg")
+            .attr("width", chartWidth)
+            .attr("height", chartHeight)
+            .attr("class", "chart");
+        
+        var chartBackground = chart
+            .append("rect")
+            .attr("class", "chartBackground")
+            .attr("width", chartInnerWidth)
+            .attr("height", chartInnerHeight)
+            .attr("transform", translate);
+    
 
-    //change the range from [0, chartHeight] to [0,.5] as this actually gets the bar chart to show up
-    var yScale = d3.scaleLinear()
-        .range([0, .5]) //range has to be very low otherwise the bars will be huge (think about the difference in my data to the example data)
-        .domain([0, 105]);
+        //set bars for each county in the dataset
+        var bars = chart.selectAll(".bars")
+            .data(csvData)
+            .enter()
+            .append("rect")
+            .sort(function(a, b){
+                return b[expressed]-a[expressed]
+            }) //!!!!!!!!example 1.7 gives above code as return b[expressed]-a[expressed]
+            .attr("class", function(d){
+                return "bars " + d.countiesZ; //change to county from the .adm in example !!!!!verify that this is not countiesZ
+            })
+            .attr("width", chartInnerWidth / csvData.length - 1);
 
-     //set bars for each county in the dataset
-     var bars = chart.selectAll(".bars")
-        .data(csvData)
-        .enter()
-        .append("rect")
-        .sort(function(a, b){
-            return a[expressed]-b[expressed]
-        })
-        .attr("class", function(d){
-            return "bars " + d.County; //change to county from the .adm in example
-        })
-        .attr("width", chartWidth / csvData.length - 1)
-        .attr("x", function(d, i){
-            return i * (chartWidth / csvData.length);
-        })
-        .attr("height", function(d){
-            return yScale(parseFloat(d[expressed]));
-        })
-        .attr("y", function(d){
-            return chartHeight - yScale(parseFloat(d[expressed]));
-        })
-       
-        //Example 2.5 line 23...end of bars block
-        .style("fill", function(d){
-            return colorScale(d[expressed]);
+            
+
+            /*
+            .attr("x", function(d, i){
+                return i * (chartWidth / csvData.length);
+            })
+            .attr("height", function(d){
+                return yScale(parseFloat(d[expressed]));
+            })
+            .attr("y", function(d){
+                return chartHeight - yScale(parseFloat(d[expressed]));
+            })
+        
+            //Example 2.5 line 23...end of bars block
+            .style("fill", function(d){
+                return colorScale(d[expressed]);
+            });
+*/
+        var chartTitle = chart.append("text")
+            .attr("x", 20)
+            .attr("y", 40)
+            .attr("class", "chartTitle")
+            .text("Population aged 18 and over in each county");
+        //annotate bars with attribute value text
+        var numbers = chart.selectAll(".numbers")
+            .data(csvData)
+            .enter()
+            .append("text")
+            .sort(function(a, b){
+                return a[expressed]-b[expressed]
+            })
+            .attr("class", function(d){
+                return "numbers " + d.NAME;
+            })
+            .attr("text-anchor", "middle")
+            .attr("x", function(d, i){
+                var fraction = chartWidth / csvData.length;
+                return i * fraction + (fraction - 1) / 2;
+            })
+            .attr("y", function(d){
+                return chartHeight - yScale(parseFloat(d[expressed])) + 10;
+            })
+            .text(function(d){
+                return d[expressed];
+            });
+        updateChart(bars, csvData.length, colorScale);
+        var yAxis = d3.axisLeft().scale(yScale);
+
+        //place axis
+        var axis = chart.append("g").attr("class", "axis").attr("transform", translate).call(yAxis);
+
+        //create frame for chart border
+        /*
+        var chartFrame = chart
+            .append("rect")
+            .attr("class", "chartFrame")
+            .attr("width", chartInnerWidth)
+            .attr("height", chartInnerHeight)
+            .attr("transform", translate);
+            */
+    };
+
+    function createDropdown(csvData){
+        //add select element
+        var dropdown = d3.select("body")
+            .append("select")
+            .attr("class", "dropdown")
+            .on("change",function(){
+                changeAttribute(this.value,csvData);
+            });
+
+        //add initial option
+        var titleOption = dropdown.append("option")
+            .attr("class", "titleOption")
+            .attr("disabled", "true")
+            .text("Select Attribute");
+
+        //add attribute name options
+        var attrOptions = dropdown.selectAll("attrOptions")
+            .data(attrArray)
+            .enter()
+            .append("option")
+            .attr("value", function(d){ return d; })
+            .text(function(d){ return d; });
+    };
+
+
+    //dropdown change event handler
+    function changeAttribute(attribute, csvData) {
+        //change the expressed attribute
+        expressed = attribute;
+
+        //recreate the color scale
+        var colorScale = makeColorScale(csvData);
+
+        //recolor enumeration units
+        var counties = d3.selectAll(".countiesZ").style("fill", function (d) {
+            var value = d.properties[expressed];
+            if (value) {
+                return colorScale(d.properties[expressed]);
+            } else {
+                return "#ccc";
+            }
         });
+        var bars = d3
+                .selectAll(".bar")
+                //re-sort bars
+                .sort(function (a, b) {
+                    return b[expressed] - a[expressed];
+                });
 
-    //annotate bars with attribute value text
-    var numbers = chart.selectAll(".numbers")
-        .data(csvData)
-        .enter()
-        .append("text")
-        .sort(function(a, b){
-            return a[expressed]-b[expressed]
-        })
-        .attr("class", function(d){
-            return "numbers " + d.adm1_code;
-        })
-        .attr("text-anchor", "middle")
-        .attr("x", function(d, i){
-            var fraction = chartWidth / csvData.length;
-            return i * fraction + (fraction - 1) / 2;
-        })
-        .attr("y", function(d){
-            return chartHeight - yScale(parseFloat(d[expressed])) + 15;
-        })
-        .text(function(d){
-            return d[expressed];
-        });
+        updateChart(bars, csvData.length, colorScale);
 
-    var chartTitle = chart.append("text")
-        .attr("x", 20)
-        .attr("y", 40)
-        .attr("class", "chartTitle")
-        .text("Population aged 18 and over in each county");
-};
+    }//bracket ends function changeAttribute
 
+    function updateChart(bars, n, colorScale) {
+        //position bars
+        bars.attr("x", function (d, i) {
+            return i * (chartInnerWidth / n) + leftPadding;
+        })
+            //size/resize bars
+            .attr("height", function (d, i) {
+                return 463 - yScale(parseFloat(d[expressed]));
+            })
+            .attr("y", function (d, i) {
+                return yScale(parseFloat(d[expressed])) + 5;
+            })
+            //color/recolor bars
+            .style("fill", function (d) {
+                var value = d[expressed];
+                if (value) {
+                    return colorScale(value);
+                } else {
+                    return "#ccc";
+                }
+            });
+
+        }
 })();
 
  

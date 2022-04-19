@@ -1,12 +1,19 @@
 /*Add CSS styles here*/
 .container{
-    background-color:rgb(0,0,0);
+    background-color:rgb(78, 60, 60);
 }
 
 .innerRect{
     padding: 50px;
 }
 
+.bars{
+    stroke:rgb(78, 78, 78)
+}
+
+.h1{
+    font-size: 10px;
+}
 .map{
     
     border: medium solid #999;
@@ -20,9 +27,31 @@
 }
 
 .numbers {
-    fill: white;
+    fill: rgb(51, 32, 7);
     font-family: "Eastwood";
     font-size: 12px;
+}
+
+.infolabel {
+    font-family: "Eastwood";
+}
+
+.dropdown {
+    position: absolute;
+    top: 85px;
+    left: 40px;
+    z-index: 10;
+    font-family: "Eastwood";
+    font-size: 1em;
+    font-weight: bold;
+    padding: 2px;
+    border: 1px solid #999;
+    box-shadow: 2px 2px 4px #999;
+}
+
+
+option {
+    font-weight: normal;
 }
 
 @font-face {
@@ -30,6 +59,33 @@
     src: url('/boilerplate/data/Eastwood.ttf');
 }
 
+.infolabel {
+    position: absolute;
+    height: 50px;
+    min-width: 100px;
+    color: #fff;
+    background-color: #000;
+    border: solid thin #fff;
+    padding: 5px 10px;
+    top: -75px;
+}
+
+.infolabel h1 {
+    margin: 0 20px 0 0;
+    padding: 0;
+    display: inline-block;
+    line-height: 1em;
+}
+
+
+.chartBackground{
+   fill:none; 
+}
+
+.axis1{
+    z-index: 1000;
+    stroke-width: 5px;
+}
 
 .chartTitle{
     font-family: "Eastwood";
@@ -44,9 +100,12 @@
     float: right;
     margin: 10px 20px 0 0;
 }
-.counties{
+/* countiesZ is the montana counties control */
+.countiesZ{
     
-    stroke: rgb(17, 73, 97)
+    stroke: rgb(80, 74, 62);
+    stroke-width: 1px;
+
 }
 
 .title{

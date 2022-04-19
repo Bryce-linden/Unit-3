@@ -1,4 +1,4 @@
-County,varA,varB,varC,varD,varE,varF,varG,varH
+NAME,Population aged 18 and over,Percentage pop. aged 18 and over,Population under 18,Percentage pop under 18,Percent pop. white,Unemployment Rate %,Per capita income $,Real GDP (Thousands of $)
 Lincoln,16037,81.5,3640,18.5,91.2,9.76,41129,526520
 Flathead,81505,78.1,22852,21.9,90.7,4.76,52740,3693810
 Glacier,9448,68.6,4330,31.4,25.6,9.35,41773,435361
@@ -8,8 +8,8 @@ Mineral,3719,82,816,18,90.3,9.77,43233,88862
 Missoula,95035,80.6,22887,19.4,86.1,5.97,54353,4953783
 Ravalli,35657,80.7,8517,19.3,91.4,5.7,49860,1041465
 Granite,2706,81.8,603,18.2,93.4,7.5,49242,89273
-Deer Lodge,7851,83.3,1570,16.7,91.7,5,45039,237288
-Silver Bow,28121,80,7012,20,90.5,6.55,50672,1332876
+Deer_Lodge,7851,83.3,1570,16.7,91.7,5,45039,237288
+Silver_Bow,28121,80,7012,20,90.5,6.55,50672,1332876
 Madison,7231,83.9,1392,16.1,92.9,4.88,57112,454175
 Gallatin,95459,80.2,23501,19.8,89,4.9,63432,5660927
 Jefferson,9566,79.2,2519,20.8,91.2,5.14,52770,241102
