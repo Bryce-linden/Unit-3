@@ -20,8 +20,11 @@
     margin: 10px 0 0 20px;
 }
 
-.regions{
-    stroke: aqua;
+.center{
+    font-family: "Eastwood";
+}
+.h1{
+    font-family: "Eastwood";
 }
 
 .countries{
@@ -30,6 +33,9 @@
     stroke-width: 2px;
 }
 
+.h3{
+    font-family: "Eastwood";
+}
 .numbers {
     fill: rgb(51, 32, 7);
     font-family: "Eastwood";
@@ -42,7 +48,7 @@
 
 .dropdown {
     position: absolute;
-    top: 85px;
+    top: 265px;
     left: 40px;
     z-index: 10;
     font-family: "Eastwood";
