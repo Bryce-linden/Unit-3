@@ -22,6 +22,7 @@
 
 .center{
     font-family: "Eastwood";
+    font-size: 50px;
 }
 .h1{
     font-family: "Eastwood";
@@ -46,9 +47,20 @@
     font-family: "Eastwood";
 }
 
+
+.jumbotron {
+    background-image: url("../img/mon_mountain.jfif");
+    text-align: center;
+    color: rgb(14, 1, 1);
+    font-size: 50px;
+    padding: 8%;
+    border-radius: 0px;
+}
+
+
 .dropdown {
     position: absolute;
-    top: 265px;
+    bottom: 40px;
     left: 40px;
     z-index: 10;
     font-family: "Eastwood";
@@ -70,14 +82,14 @@ option {
 }
 
 .infolabel {
-    position: absolute;
-    height: 50px;
+    position:absolute;
+    height: 80px;
     min-width: 100px;
     color: #fff;
     background-color: #000;
     border: solid thin #fff;
     padding: 5px 10px;
-    top: -75px;
+    top: 190px;
 }
 
 .infolabel h1 {
