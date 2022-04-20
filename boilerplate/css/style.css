@@ -20,6 +20,10 @@
     margin: 10px 0 0 20px;
 }
 
+.regions{
+    stroke: aqua;
+}
+
 .countries{
     fill:rgb(145, 145, 145);
     stroke: rgb(80, 80, 80);

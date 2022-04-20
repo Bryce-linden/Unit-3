@@ -57,8 +57,9 @@
             .projection(projection);
 
         var promises = [
-            d3.csv("data/county_data_new.csv"),
+            d3.csv("data/county_data_expanded.csv"),
             d3.json("data/States.topojson"),
+            //d3.json("data/mon_region_line_Fin.topojson"),
             d3.json("data/montanaCounties.topojson"),
             
         ];
@@ -70,16 +71,26 @@
             var csvData = data[0],
                 world = data[1],
                 montana = data[2];
+               // mon_regions = data[3];
             //you'll only use worldCOuntries as the background, you won't interact with it
             //montanaCounties is the important one
             var worldCountries = topojson.feature(world, world.objects.ne_10m_admin_1_states_provinces),
                 montanaCounties = topojson.feature(montana,montana.objects.MontanaCounties).features;
+                
+                
 
         var countries = map
                 .append("path")
                 .datum(worldCountries)
                 .attr("class","countries")
                 .attr("d",  path);
+        
+        // var regions = map
+        //         .append("path")
+        //         .datum(mon_regions)
+        //         .attr("class","regions")
+        //         .attr("d",  path);
+                
 
         var colorScale = makeColorScale(csvData);
         
@@ -248,7 +259,7 @@ function setChart(csvData, colorScale){
 
     var axis1 = chart.append("g")
         .attr("class","axis1")
-        .attr("transform", "translate(46,0)")
+        .attr("transform", "translate(56,0)")
         .call(yAxis)
 
      //set bars for each county in the dataset
